@@ -1,0 +1,49 @@
+# ===== 站点基础信息 =====
+title: TsukiShima987 的博客
+author: TsukiShima987
+description: >-
+  记录编程、学习与日常的个人站点。
+
+# 用户站点仓库（<用户名>.github.io）的 baseurl 必须为空字符串。
+baseurl: ""
+url: "https://tsukishima987.github.io"
+
+github_username: TsukiShima987
+
+# ===== 构建 =====
+timezone: Asia/Shanghai
+
+# 文章 URL 形式：/2026/09/20/welcome/
+# 刻意不包含 :categories，因为分类常用中文，会让地址出现中文转义字符。
+permalink: /:year/:month/:day/:title/
+
+# ===== 主题 =====
+theme: minima
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+minima:
+  date_format: "%Y-%m-%d"
+
+# 首页与列表页显示摘要而不是全文
+show_excerpts: true
+
+# 顶部导航栏显示的页面
+header_pages:
+# 这样新增文章时 front matter 里可以省掉 layout 一行。
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: pag
+      type: posts
+    values:
+      comments: false

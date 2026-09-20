@@ -1,0 +1,45 @@
+---
+# 覆盖 minima 主题的 home 布局（Jekyll 会用站点同路径文件替换主题文件）。
+# 相比主题原版：文案中文化、显示分类、支持关闭 RSS 链接、补充空状态提示。
+layout: default
+---
+
+<div class="home">
+  {%- if page.title -%}
+    <h1 class="page-heading">{{ page.title }}</h1>
+  {%- endif -%}
+
+  {{ content }}
+
+  {%- if site.posts.size > 0 -%}
+    <h2 class="post-list-heading">
+      {{ page.list_title | default: "文章列表" }}
+    </h2>
+
+    <ul class="post-list">
+      {%- assign date_format = site.minima.date_format | default: "%Y-%m-%d" -%}
+      {%- for post in site.posts -%}
+      <li>
+        <span class="post-meta">
+          {{ post.date | date: date_format }}
+          {%- if post.categories.size > 0 %} · {{ post.categories | join: " / " }}{% endif -%}
+        </span>
+        <h3>
+          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </h3>
+        {%- if site.show_excerpts -%}
+          {{ post.excerpt }}
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- unless site.minima.hide_rss_link -%}
+      <p class="rss-subscribe">
+        订阅 <a href="{{ '/feed.xml' | relative_url }}">RSS 更新</a>
+      </p>
+    {%- endunless -%}
+  {%- else -%}
+    <p>还没有文章。在 <code>_posts/</code> 目录下新建 <code>YYYY-MM-DD-标题.md</code> 即可发布。</p>
+  {%- endif -%}
+</div>
