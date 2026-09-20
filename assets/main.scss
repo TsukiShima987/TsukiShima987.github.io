@@ -1,5 +1,28 @@
 ---
 ---
 
+/* ==========================================================================
+   覆盖 minima 的排版变量
+   必须在 @import "minima" 之前 —— 主题里这些变量都带 !default，
+   只有「先定义」才能生效。改这里会同时影响全站字号与行高。
+   ========================================================================== */
+
+/* 中文字体栈。
+   浏览器是「逐字符找第一个含该字形的字体」，所以顺序很重要：
+   先让英文数字走系统 UI 字体，再用后面的中文字体兜住汉字。
+   PingFang SC = macOS/iOS，Microsoft YaHei = Windows，
+   Noto Sans CJK SC / Source Han Sans SC = Linux 与 Android。 */
+$base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+  "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
+  "Source Han Sans SC", "WenQuanYi Micro Hei",
+  Roboto, Helvetica, Arial, sans-serif,
+  "Apple Color Emoji", "Segoe UI Emoji";
+
+$base-font-size: 17px;   /* 原 16px。汉字笔画密，16px 偏小 */
+$base-line-height: 1.75; /* 原 1.5。中文长文需要更松的行距 */
+
+/* 块级元素的下边距 = $spacing-unit * 0.5 */
+$spacing-unit: 32px;
+
 @import "minima";
 @import "custom";
