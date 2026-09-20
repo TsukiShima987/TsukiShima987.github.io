@@ -1,0 +1,53 @@
+{%- comment -%}
+文章目录（TOC）。
+纯构建时生成：不需要 JavaScript，也不依赖任何插件。
+
+原理：kramdown 会给每个标题自动生成 id，例如
+  ## 如何再写一篇   ->   <h2 id="如何再写一篇">如何再写一篇</h2>
+所以只要从渲染好的正文里把这些 id 和文字抽出来，做成锚点链接即可。
+
+安全性：layout 里拿到的 content 是「已渲染的 HTML」，代码块里的 <h2 会被
+转义成 &lt;h2，所以按 "<h" 切分不会误伤代码块里演示的标题。
+
+只在标题数 >= 2 时显示 —— 只有一个标题的目录没有意义。
+{%- endcomment -%}
+
+{%- assign toc_chunks = content | split: "<h" -%}
+
+{%- comment -%} 先数一遍，决定要不要显示 {%- endcomment -%}
+{%- assign toc_count = 0 -%}
+{%- for chunk in toc_chunks offset:1 -%}
+  {%- assign lv = chunk | slice: 0, 1 -%}
+  {%- assign head = chunk | split: "</h" | first -%}
+  {%- if head contains 'id="' -%}
+    {%- if lv == "2" or lv == "3" -%}
+      {%- assign toc_count = toc_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if toc_count >= 2 -%}
+<details class="toc" open>
+  <summary class="toc__summary">目录</summary>
+  <ol class="toc__list">
+    {%- for chunk in toc_chunks offset:1 -%}
+      {%- assign lv = chunk | slice: 0, 1 -%}
+      {%- assign head = chunk | split: "</h" | first -%}
+      {%- if head contains 'id="' -%}
+        {%- if lv == "2" or lv == "3" -%}
+          {%- assign id = head | split: 'id="' | last | split: '"' | first -%}
+          {%- comment -%}
+            标题文字 = 第一个 ">" 之后的所有内容，再用 join 把被切散的
+            ">" 拼回去。不能用 split '">' | last —— 标题里若含行内代码，
+            kramdown 会生成 <code class="...">，其中的 "> 会被误判为分隔符。
+          {%- endcomment -%}
+          {%- assign text = head | split: '>' | slice: 1, 50 | join: '>' -%}
+    <li class="toc__item toc__item--h{{ lv }}">
+      <a href="#{{ id }}">{{ text }}</a>
+    </li>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </ol>
+</details>
+{%- endif -%}
