@@ -28,3 +28,63 @@ body {
      如果在意移动端表现，删掉下面这一行即可。 */
   background-attachment: fixed;
 }
+
+/* --------------------------------------------------------------------------
+   文章末尾的音乐条（见 _includes/music.html）
+   只有 front matter 里写了 music 链接才会渲染出这段结构。
+   整体透明，直接透出页面背景，只用一条细分隔线与正文分开。
+   -------------------------------------------------------------------------- */
+.music-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 2.4rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  text-align: center;
+
+  /* 想要一点点底色就取消下面三行的注释（0.45 左右比较自然）
+     background-color: rgba(253, 253, 253, 0.45);
+     border-radius: 6px;
+     padding: 1rem; */
+}
+
+.music-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background-color: #2a7ae2;
+  color: #fff;
+  font-size: 0.76rem;
+  line-height: 1;
+}
+
+/* 网易云播放器：直接显示，不做折叠，不需要 JS。
+   loading="lazy" 让浏览器在滚动到附近时才真正加载 iframe，
+   文章底部本来就在首屏之外，所以首屏不会有第三方请求。 */
+.music-frame {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: 66px;
+  border: 0;
+}
+
+/* 音频文件直链用浏览器原生播放器 */
+.music-audio {
+  width: 100%;
+  max-width: 420px;
+  height: 36px;
+}
+
+.music-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}

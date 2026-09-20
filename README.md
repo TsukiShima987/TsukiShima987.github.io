@@ -67,11 +67,18 @@ bundle exec jekyll serve --drafts
 ├── 404.html                 404 页面
 ├── _posts/                  文章（唯一的发布入口）
 ├── _drafts/                 草稿（默认不构建）
-├── _layouts/                页面骨架模板
-│   └── home.html            自定义首页列表布局
-├── _includes/               可复用片段（导航、页脚、head 等）
+├── _layouts/                页面骨架模板（覆盖主题同名文件）
+│   ├── home.html            自定义首页列表布局
+│   └── post.html            文章页布局（在正文后插入音乐卡片）
+├── _includes/               可复用片段
+│   └── music.html           文末音乐条（贴一个链接即可）
 ├── _sass/                   SCSS 变量与样式片段
-├── assets/                  样式入口与静态资源（图片放 assets/images/）
+│   └── _custom.scss         自定义样式（页面背景图、音乐卡片）
+├── assets/                  样式入口与静态资源
+│   ├── main.scss            样式入口（引入 minima + custom）
+│   └── images/              图片资源
+├── favicon.ico              网站图标（多尺寸）
+├── apple-touch-icon.png     iOS 添加到主屏时的图标
 ├── _data/                   结构化数据（YAML/JSON，模板可读取）
 ├── .github/workflows/       GitHub Actions 构建发布流程
 └── _site/                   构建产物，自动生成，不要手动修改
@@ -170,6 +177,47 @@ bundle exec jekyll serve --drafts
 ### 分类与标签
 
 `categories` / `tags` 目前仅作为元数据（首页列表会显示分类）。**minima 不会自动生成分类汇总页。** 如需 `/categories/技术/` 这类页面，需要使用 `jekyll-archives` 插件，或自行编写页面遍历 `site.categories`。
+
+### 文章配乐（文末音乐条）
+
+在文章 front matter 里贴一个音乐链接，正文之后就会出现一条音乐条：
+
+```yaml
+---
+title: "文章标题"
+date: 2026-09-25 20:00:00 +0800
+music: "https://music.163.com/#/song?id=1997192690"
+---
+```
+
+链接从哪来：网易云网页播放器或 App 里「分享 → 复制链接」，**直接粘贴即可，不需要自己做任何转换**——模板会从地址里自动取出歌曲 ID。歌名、歌手、封面都由播放器自己显示，不用手写。
+
+**不写 `music` 的文章不会有任何变化**，它是按文章可选的。
+
+支持三种链接：
+
+| 链接类型 | 效果 |
+|---|---|
+| 网易云单曲（含 `music.163.com` 与 `id=`） | 直接显示播放器 + 跳转链接 |
+| 音频直链（`.mp3` / `.m4a` / `.ogg` / `.wav` / `.flac`） | 浏览器原生播放器 |
+| 其他任意链接 | 只显示一个「收听本期配乐」跳转链接 |
+
+**播放器直接显示，没有折叠，也不依赖 JavaScript。** 样式完全透明，只有一条顶部分隔线，直接透出页面背景。想要一点底色，取消 `_sass/_custom.scss` 里 `.music-card` 中那三行注释即可。
+
+**关于加载开销**：iframe 标了 `loading="lazy"`，浏览器会在滚动到附近时才加载它。但这个阈值相当宽松（Chrome 大约提前 1250px 就开始加载）：
+
+- **长文章**（音乐条在几千像素之外）→ 首屏没有任何第三方请求，滚动到下部才加载
+- **短文章**（整页高度不到两屏）→ 音乐条一开始就在阈值内，**打开页面就加载**。实测一篇 1500px 高的文章会因此产生 **22 个**发往 `music.163.com` 的请求
+
+也就是说，让播放器直接可见，代价是**每个访客都会被网易云加载一次、并可能被种下 Cookie**。如果将来想省掉这个开销，把 `_includes/music.html` 换回 `<details>` 折叠方案即可（需要少量 JS）。
+
+**控制台里的报错是正常的**：网易云播放器加载后会出现它自己脚本的 `SecurityError: Blocked a frame...` 和 `Permissions policy violation` 警告。这些来自 `music.163.com` 的页面本身（它试图访问父页面、申请传感器权限，被浏览器按跨域策略拦截），**不影响播放**。
+
+相关文件：
+
+- `_includes/music.html` —— 音乐条结构
+- `_layouts/post.html` —— 在正文后调用该 include
+- `_sass/_custom.scss` 中 `.music-card` 一节 —— 样式
 
 ---
 

@@ -1,0 +1,63 @@
+{%- comment -%}
+文章末尾的音乐条。front matter 里直接写一个链接即可，不需要歌名/歌手/推荐语。
+
+  music: "https://music.163.com/#/song?id=1997192690"   # 网易云单曲 -> 内嵌播放器
+  music: "https://example.com/song.mp3"                 # 音频直链 -> 浏览器原生播放器
+  其他任意链接                                           # 只显示一个跳转链接
+
+播放器直接显示在页面上，不需要点击展开，也不依赖 JavaScript。
+不写 music 字段的文章不会有任何变化。
+{%- endcomment -%}
+
+{%- assign m = page.music -%}
+{%- if m -%}
+
+  {%- comment -%} 判断是不是音频文件直链 {%- endcomment -%}
+  {%- assign is_audio = false -%}
+  {%- assign audio_exts = ".mp3,.m4a,.ogg,.wav,.flac" | split: "," -%}
+  {%- for ext in audio_exts -%}
+    {%- if m contains ext -%}
+      {%- assign is_audio = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- comment -%}
+    网易云链接：从地址里的 id=123 取出歌曲 ID，拼出官方外链播放器地址。
+    这样作者只要粘贴分享链接，不用自己去翻歌曲 ID。
+  {%- endcomment -%}
+  {%- assign has_player = false -%}
+  {%- if m contains "music.163.com" and m contains "id=" -%}
+    {%- assign song_id = m | split: "id=" | last | split: "&" | first -%}
+    {%- assign has_player = true -%}
+    {%- assign embed = "https://music.163.com/outchain/player?type=2&auto=0&height=66&id=" | append: song_id -%}
+  {%- endif -%}
+
+  <aside class="music-card">
+    {%- if is_audio -%}
+
+      <audio class="music-audio" controls preload="none" src="{{ m }}"></audio>
+
+    {%- elsif has_player -%}
+
+      <iframe class="music-frame"
+              src="{{ embed }}"
+              loading="lazy"
+              title="音乐播放器"
+              frameborder="0"
+              allow="autoplay"></iframe>
+      <a class="music-link" href="{{ m }}" target="_blank" rel="noopener noreferrer">
+        <span class="music-icon" aria-hidden="true">♪</span>
+        <span>在网易云音乐打开<span aria-hidden="true"> ↗</span></span>
+      </a>
+
+    {%- else -%}
+
+      <a class="music-link" href="{{ m }}" target="_blank" rel="noopener noreferrer">
+        <span class="music-icon" aria-hidden="true">♪</span>
+        <span>收听本期配乐<span aria-hidden="true"> ↗</span></span>
+      </a>
+
+    {%- endif -%}
+  </aside>
+
+{%- endif -%}
