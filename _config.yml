@@ -30,9 +30,12 @@ minima:
 # 首页与列表页显示摘要而不是全文
 show_excerpts: true
 
-# 顶部导航栏显示的页面
+# 顶部导航栏显示的页面，按此顺序排列
 header_pages:
-# 这样新增文章时 front matter 里可以省掉 layout 一行。
+  - about.md
+
+# ===== 默认值 =====
+# 这样新增文章时 front matter 里可以省掉 layout 一行
 defaults:
   - scope:
       path: ""
@@ -43,7 +46,4 @@ defaults:
       path: ""
       type: pages
     values:
-      layout: pag
-      type: posts
-    values:
-      comments: false
+      layout: page
