@@ -17,6 +17,22 @@ timezone: Asia/Shanghai
 # 刻意不包含 :categories，因为分类常用中文，会让地址出现中文转义字符。
 permalink: /:year/:month/:day/:title/
 
+# 不复制到 _site/ 的文件。
+# 注意：一旦显式设置 exclude，Jekyll 的默认排除列表会被整体替换，
+# 所以下面把 Gemfile / vendor / 缓存 这些默认项也一并列出了。
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - gemfiles/
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .sass-cache/
+  - .jekyll-cache/
+
 # ===== 主题 =====
 theme: minima
 
