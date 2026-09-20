@@ -125,3 +125,129 @@ h5, h6 { font-size: 0.95rem; }
     margin-bottom: 1.15em;
   }
 }
+
+/* ==========================================================================
+   首页文章卡片（见 _layouts/home.html）
+   --------------------------------------------------------------------------
+   卡片底色用半透明白，让页面背景的插画能透出一点。
+   想要完全透明就把 background-color 改成 transparent。
+   ========================================================================== */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 0;
+  list-style: none;
+
+  /* 覆盖主题给 > li 设的 margin-bottom，间距改由上面的 gap 控制 */
+  > li {
+    margin-bottom: 0;
+  }
+}
+
+.post-card {
+  display: flex;
+  gap: 1.15rem;
+  padding: 1.15rem 1.25rem;
+  background-color: rgba(253, 253, 253, 0.62);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 10px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(42, 122, 226, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.post-card__cover {
+  display: block;
+  flex: none;
+  width: 128px;
+  align-self: stretch;
+  min-height: 96px;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.post-card__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* 竖图会居中裁成方形，不拉伸变形 */
+}
+
+/* min-width: 0 让长标题和长英文能正常换行，不会被 flex 撑破容器 */
+.post-card__body {
+  min-width: 0;
+}
+
+.post-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  color: #7a7a7a;
+}
+
+.post-card__cat {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background-color: rgba(42, 122, 226, 0.1);
+  color: #2a7ae2;
+  font-size: 0.72rem;
+}
+
+.post-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* 卡片标题用深色而不是品牌蓝，整页蓝色链接太多会显得吵；
+   :visited 显式写一遍是有意的，否则会被主题的 a:visited 拿回蓝紫色 */
+.post-card__title a,
+.post-card__title a:visited {
+  color: #111;
+}
+
+.post-card__title a:hover {
+  color: #2a7ae2;
+  text-decoration: none;
+}
+
+.post-card__excerpt {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.7;
+  color: #565656;
+}
+
+/* 窄屏改成上图下文 */
+@media screen and (max-width: 600px) {
+  .post-card {
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .post-card__cover {
+    width: 100%;
+    height: 170px;
+    min-height: 0;
+  }
+}
+
+/* 尊重系统的「减弱动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+  .post-card {
+    transition: none;
+  }
+
+  .post-card:hover {
+    transform: none;
+  }
+}

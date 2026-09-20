@@ -12,24 +12,59 @@ layout: default
   {{ content }}
 
   {%- if site.posts.size > 0 -%}
-    <h2 class="post-list-heading">
-      {{ page.list_title | default: "文章列表" }}
-    </h2>
+    {%- comment -%}
+      这里原先有一个「文章列表」的 h2 小标题（class 是 post-list-heading）。
+      卡片化之后每张卡片自带日期和分类，再顶一个大标题显得冗余，所以移除了。
+      需要恢复的话，在这里加回：
+      <h2 class="post-list-heading">{{ page.list_title | default: "文章列表" }}</h2>
+    {%- endcomment -%}
 
     <ul class="post-list">
       {%- assign date_format = site.minima.date_format | default: "%Y-%m-%d" -%}
       {%- for post in site.posts -%}
-      <li>
-        <span class="post-meta">
-          {{ post.date | date: date_format }}
-          {%- if post.categories.size > 0 %} · {{ post.categories | join: " / " }}{% endif -%}
-        </span>
-        <h3>
-          <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-        </h3>
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
+
+        {%- comment -%}
+          缩略图优先级：
+          1. front matter 里的 cover: 字段（想指定别的图时用）
+          2. 自动取正文里第一张图的 src
+          3. 都没有就不显示缩略图，卡片自动变成纯文字版
+        {%- endcomment -%}
+        {%- assign cover = post.cover -%}
+        {%- if cover == nil and post.content contains "<img" -%}
+          {%- assign img_parts = post.content | split: 'src="' -%}
+          {%- assign cover = img_parts[1] | split: '"' | first -%}
         {%- endif -%}
+
+      <li class="post-card">
+        {%- if cover -%}
+          {%- comment -%}
+            缩略图是纯装饰（标题就在旁边），所以 alt 留空、
+            并且从 tab 顺序和读屏里排除，避免同一个链接被读两遍。
+          {%- endcomment -%}
+          <a class="post-card__cover" href="{{ post.url | relative_url }}"
+             tabindex="-1" aria-hidden="true">
+            <img src="{{ cover | relative_url }}" alt="" loading="lazy">
+          </a>
+        {%- endif -%}
+
+        <div class="post-card__body">
+          <p class="post-card__meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: date_format }}</time>
+            {%- for category in post.categories -%}
+              <span class="post-card__cat">{{ category }}</span>
+            {%- endfor -%}
+          </p>
+
+          <h3 class="post-card__title">
+            <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+          </h3>
+
+          {%- if site.show_excerpts -%}
+            <p class="post-card__excerpt">
+              {{ post.excerpt | strip_html | strip | truncate: 120 }}
+            </p>
+          {%- endif -%}
+        </div>
       </li>
       {%- endfor -%}
     </ul>
