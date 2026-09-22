@@ -29,7 +29,7 @@
 {%- if toc_count >= 2 -%}
 <details class="toc" open>
   <summary class="toc__summary">目录</summary>
-  <ol class="toc__list">
+  <ul class="toc__list">
     {%- for chunk in toc_chunks offset:1 -%}
       {%- assign lv = chunk | slice: 0, 1 -%}
       {%- assign head = chunk | split: "</h" | first -%}
@@ -48,6 +48,6 @@
         {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
-  </ol>
+  </ul>
 </details>
 {%- endif -%}

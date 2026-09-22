@@ -92,22 +92,39 @@ body {
 /* ==========================================================================
    标题层级
    --------------------------------------------------------------------------
-   minima 把 h1-h6 的字重设成了和正文一样的 400，也没有定义字号（直接用
-   浏览器默认值），所以标题和正文糊在一起 —— 这是页面显"平"的主因。
-   这里重建一套标题体系。
-   注：字号用 rem 而非相对 $base-font-size，避免和主题的
-   relative-font-size() 叠加后过大。
+   minima 把 h1-h6 的字重设成了和正文一样的 400，也没有全局定义字号，
+   所以标题先重建一套。
+
+   ⚠️ 两个必须绕开的坑：
+   1. minima 另有 .post-content h2 / h3 / h4 三条硬编码字号的规则，
+      优先级（0,1,1）高于单纯的 h2（0,0,1）。所以下面每条都要带上
+      .post-content 前缀，靠「同优先级 + 写在后面」才压得住。
+      而且它没有 .post-content h1 —— 只写 h2 不写 h1，就会出现
+      # 比 ## 还小的怪事。
+   2. minima 把字号设在 body 上而不是 html，所以 1rem = 浏览器默认 16px，
+      不等于我们的 $base-font-size(17px)。因此这里用 Sass 变量相乘，
+      不用 rem，这样调整 base 字号时标题会跟着走。
    ========================================================================== */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.35;
 }
 
-h1 { font-size: 1.7rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; }
-h5, h6 { font-size: 0.95rem; }
+h1,
+.post-content h1 { font-size: $base-font-size * 1.75; }   /* 29.75px */
+
+h2,
+.post-content h2 { font-size: $base-font-size * 1.45; }   /* 24.65px */
+
+h3,
+.post-content h3 { font-size: $base-font-size * 1.25; }   /* 21.25px */
+
+h4,
+.post-content h4 { font-size: $base-font-size * 1.1; }    /* 18.7px */
+
+h5, h6,
+.post-content h5,
+.post-content h6 { font-size: $base-font-size; }
 
 /* --------------------------------------------------------------------------
    正文留白
@@ -280,14 +297,15 @@ h5, h6 { font-size: 0.95rem; }
 }
 
 .toc__list {
-  margin: 0 0 0 1.2rem;
+  margin: 0;
   padding: 0;
+  list-style: none;   /* 不要序号；层级只用缩进表示 */
   font-size: 0.88rem;
   line-height: 1.8;
 }
 
 .toc__item--h3 {
-  margin-left: 1.1rem;
+  margin-left: 1.25rem;
   font-size: 0.85rem;
 }
 
