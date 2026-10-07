@@ -1,15 +1,29 @@
 {%- comment -%}
-文章末尾的音乐条。front matter 里直接写一个链接即可，不需要歌名/歌手/推荐语。
+音乐条。两种用法，都是「贴一个链接」，不需要歌名/歌手/推荐语。
 
-  music: "https://music.163.com/#/song?id=1997192690"   # 网易云单曲 -> 内嵌播放器
-  music: "https://example.com/song.mp3"                 # 音频直链 -> 浏览器原生播放器
-  其他任意链接                                           # 只显示一个跳转链接
+用法一 · 放在文末：由 _layouts/post.html 自动调用，你什么都不用写，
+                只在 front matter 里给一个链接即可：
+                  music: "https://music.163.com/#/song?id=1997192690"
 
-播放器直接显示在页面上，不需要点击展开，也不依赖 JavaScript。
-不写 music 字段的文章不会有任何变化。
+用法二 · 插在正文任意位置：把你的链接作为 url 参数传给这个 include。
+                 正文里的 include 会在 Markdown 转换之前执行，
+                 所以放在哪一段后面，卡片就出现在哪一段后面。
+
+支持的链接类型：
+  网易云单曲（含 music.163.com 与 id=） -> 内嵌播放器 + 跳转链接
+  音频直链（.mp3/.m4a/.ogg/.wav/.flac） -> 浏览器原生播放器
+  其他任意链接                          -> 只显示一个跳转链接
+
+播放器直接显示，不折叠，不依赖 JavaScript。
+两种用法都没写时，本站不会有任何变化。
 {%- endcomment -%}
 
-{%- assign m = page.music -%}
+{%- comment -%}
+  include.url  是正文里传进来的参数（用法二）
+  page.music   是 front matter 里的字段（用法一）
+  两者都没写时 m 为 nil，下面整段不渲染。
+{%- endcomment -%}
+{%- assign m = include.url | default: page.music -%}
 {%- if m -%}
 
   {%- comment -%} 判断是不是音频文件直链 {%- endcomment -%}

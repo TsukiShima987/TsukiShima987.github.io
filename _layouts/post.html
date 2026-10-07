@@ -26,6 +26,11 @@ layout: default
     {{ content }}
   </div>
 
+  {%- comment -%}
+    文末音乐条，来自 front matter 的 music 字段。
+    它和正文里手动插的卡片是两件独立的事：都写了就都会出现。
+    不想在文末再出现一张，就别写 front matter 的 music 字段。
+  {%- endcomment -%}
   {%- include music.html -%}
 
   {%- if site.disqus.shortname -%}
